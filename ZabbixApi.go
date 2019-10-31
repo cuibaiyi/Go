@@ -8,29 +8,34 @@ import (
 	"strings"
 )
 
-type zabbixobj struct {
-	url string
-	contType string
-	user string
-	passwd string
+type zabbixapi interface {
+	CreateHost(z *Zabbixobj)
+	Login(z *Zabbixobj) string
 }
 
-func NewObj(u, c, user, passwd string) *zabbixobj {
-	return &zabbixobj{
-		url: u,
-		contType: c,
-		user: user,
-		passwd: passwd,
+type Zabbixobj struct {
+	Url string `json:"url"`
+	ContType string `json:"conttype"`
+	User string `json:"user"`
+	Passwd string `json:"passwd"`
+}
+
+func Newzabbixobj(u, c, user, passwd string) *Zabbixobj {
+	return &Newzabbixobj{
+		Url: u,
+		ContType: c,
+		User: user,
+		Passwd: passwd,
 	}
 }
 
 func main() {
-	var zapi *zabbixobj
-	zapi = NewObj("http://127.0.0.1/api_jsonrpc.php", "application/json-rpc", "zabbix", "123456")
+	var zapi zabbixapi
+	zapi = Newzabbixobj("http://127.0.0.1/api_jsonrpc.php", "application/json-rpc", "zabbix", "123456")
 	CreateHost(zapi)
 }
 
-func Login(z *zabbixobj) string {
+func Login(z *Zabbixobj) string {
 	data := fmt.Sprintf(`{
 		{
 			"jsonrpc": "2.0",
@@ -42,10 +47,10 @@ func Login(z *zabbixobj) string {
 			"id": 1,
 			"auth": None
 		}
-	}`, z.user, z.passwd)
+	}`, z.User, z.Passwd)
 
 	JsonData, _ := json.Marshal(data)
-	resp, err := http.Post(z.url, z.contType, strings.NewReader(string(JsonData)))
+	resp, err := http.Post(z.Url, z.ContType, strings.NewReader(string(JsonData)))
 	if err != nil {
 		fmt.Println("post failed, err:%v\n", err)
 		return ""
@@ -59,7 +64,7 @@ func Login(z *zabbixobj) string {
 	return string(b)
 }
 
-func CreateHost(z *zabbixobj) {
+func CreateHost(z *Zabbixobj) {
 	ipList := []string{"127.0.0.1","192.168.1.1"}
 	for _, ip := range ipList {
 		data := fmt.Sprintf(`
@@ -92,7 +97,7 @@ func CreateHost(z *zabbixobj) {
 		string(ip), string(ip), string(ip), Login(z))
 		
 		JsonData, _ := json.Marshal(data)
-		resp, err := http.Post(z.url, z.contType, strings.NewReader(string(JsonData)))
+		resp, err := http.Post(z.Url, z.ContType, strings.NewReader(string(JsonData)))
 		if err != nil {
 			fmt.Println("post failed, err:%v\n", err)
 			return
