@@ -47,31 +47,14 @@ var (
 	timestr    = fmt.Sprintf("%s%s", strconv.FormatInt(now.Unix(), 10), "000")
 	toTime, fromTime = myt()
 	id = "xxx"
-	logapi   = "http://xxx/log4x/search/xxx"
-	gwapi    = "http://xxx/bap/gw/aopoauth/xxx"
-	api      = "http://xxx/bap/gw/rest/xxx?"
+	logapi   = "http://xxx/search/xxx"
+	gwapi    = "http://xxx/aopoauth/xxx"
+	api      = "http://xxx/rest/xxx?"
 	contType = "application/json"
 	d        = `{
 	"otherId":"xxx",
 	"smsTitle":"",
-	"smsContent":"",
-	"ynDefaultNum":"N",
-	"sendNum":"",
-	"ynTimeSend":"N",
-	"timeNum":"20191202155000",
-	"ynUseHeibai":"N",
-	"heiOrBai":"B",
-	"receiveNums":"%s",
-	"ynTemplate":"Y",
-	"templateNum":"%s",
-	"dynaVariablle":%s,
-	"ynReply":"N",
-	"replyUrl":null,
-	"pageSize":10,
-	"currentPage":1,
-	"provinceCode":"HQ",
-	"appCode":"xxx",
-	"inputExt":"JSON"
+	"smsContent":""
 	}`
 )
 
@@ -99,7 +82,7 @@ func main() {
 }
 
 func Count() string {
-	//统一待办成功数
+	//成功数
 	sdata := fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:true AND appNodeRemark:统一待办| stats dc(traceId)\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
 	sbody := fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:true AND appNodeRemark:统一待办| stats dc(traceId)", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
 	obj1 := SLogData{
@@ -108,7 +91,7 @@ func Count() string {
 		result: "result.result.0.count(traceId)",
 	}
 
-  //统一待办失败数
+        //失败数
 	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:false AND appNodeRemark:统一待办| stats dc(traceId) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
 	sbody = fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:false AND appNodeRemark:统一待办| stats dc(traceId) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
 	obj2 := SLogData{
@@ -117,39 +100,12 @@ func Count() string {
 		result: "result.result.0.count(traceId)",
 	}
 
-	//用户登录总数
-	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"log\", \"queryString\": \"sysCode:\\\"unissosrv-app\\\" AND \\\"UaLoginLogServiceImpl.saveLoginLog--request\\\"| stats count(doc_id) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
-	sbody = fmt.Sprintf(`{"indexGroup": "log", "queryString": "sysCode:\"unissosrv-app\" AND \"UaLoginLogServiceImpl.saveLoginLog--request\"| stats count(doc_id) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
-	obj3 := SLogData{
-		logdata: sdata,
-		logbody: sbody,
-		result: "result.result.0.count(doc_id)",
-	}
-
-	//用户登录成功数
-	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"log\", \"queryString\": \"sysCode:\\\"unissosrv-app\\\" AND (\\\"UaLoginLogServiceImpl.saveLoginLog--request\\\" AND \\\"成功\\\")| stats count(doc_id) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
-	sbody = fmt.Sprintf(`{"indexGroup": "log", "queryString": "sysCode:\"unissosrv-app\" AND (\"UaLoginLogServiceImpl.saveLoginLog--request\" AND \"成功\")| stats count(doc_id) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
-	obj4 := SLogData{
-		logdata: sdata,
-		logbody: sbody,
-		result: "result.result.0.count(doc_id)",
-	}
-
-	//用户登录失败数
-	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"log\", \"queryString\": \"sysCode:\\\"unissosrv-app\\\" AND (\\\"UaLoginLogServiceImpl.saveLoginLog--request\\\" AND (\\\"用户或密码错误\\\" OR \\\"短信验证码\\\"))| stats count(doc_id) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
-	sbody = fmt.Sprintf(`{"indexGroup": "log", "queryString": "sysCode:\"unissosrv-app\" AND (\"UaLoginLogServiceImpl.saveLoginLog--request\" AND (\"用户或密码错误\" OR \"短信验证码\"))| stats count(doc_id) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
-	obj5 := SLogData{
-		logdata: sdata,
-		logbody: sbody,
-		result: "result.result.0.count(doc_id)",
-	}
-
-	datasplice = append(datasplice, obj1, obj2, obj3, obj4, obj5)
+	datasplice = append(datasplice, obj1, obj2)
 	totolmap = make(map[int]string)
 	for i, data := range datasplice {
 		totolmap[i] = zoo(data.logdata, data.logbody, data.result)
 	}
-	zoodata := fmt.Sprintf(`{"DATE":"%s","LOGINMAX":"%s","LOGINOK":"%s","LOGINERR":"%s","TODOOK":"%s","TODOERR":"%s"}`, date, totolmap[2], totolmap[3], totolmap[4], totolmap[0], totolmap[1])
+	zoodata := fmt.Sprintf(`{"DATE":"%s", "OK":"%s", "ERR":"%s"}`, date, totolmap[0], totolmap[1])
 	return zoodata
 }
 
@@ -213,12 +169,12 @@ func demo(numberstr, templateid string) bool {
 	fmt.Println(SendData)
 	d1 := fmt.Sprintf(d, numberstr, templateid, SendData)
 	token := GetGwToken(gwapi)
-	c := url.Values{"method": {"M_ABILITY_UNINOTI_107000001"}, "format": {"json"}, "appId": {"10009"}, "version": {"V1.0"}, "accessToken": {token}, "sign": {"3D993BD22F44E6C1A638D832DB2BFB6C8BA4116BEE1B3561B4B198DB7BB6B1A0"}, "timestamp": {"20190313162400"},
+	c := url.Values{"method": {"xxx"}, "format": {"json"}, "appId": {"10009"}, "version": {"Vx"}, "accessToken": {token}, "sign": {"xxx"}, "timestamp": {"20190313162400"},
 		"content": {d1}}
 	tzapi := fmt.Sprint(api, c.Encode())
 	fmt.Println(tzapi)
 	code, errstr := GetSendCode(tzapi)
-	fmt.Printf("请求统一通知返回的状态码%s,错误信息:%s\n", code, errstr)
+	fmt.Printf("rep返回的状态码%s,错误信息:%s\n", code, errstr)
 	return true
 }
 
