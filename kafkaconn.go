@@ -15,10 +15,10 @@ import (
 
 var (
 	EndpointsApi = "https://xxx/api/v1/namespaces/aimd/endpoints/kafka-debezium-proxy"
-	kafkaApi = "http://kafka-debezium-proxy.aimd.svc/connectors"
-	PutConnApi = "http://kafka-debezium-proxy.aimd.svc/connectors/mys208/config"
-	connapi = "http://kafka-debezium-proxy.aimd.svc/connectors/mys208"
-	statusapi = "http://kafka-debezium-proxy.aimd.svc/connectors/mys208/status"
+	kafkaApi = "http://xxx/connectors"
+	PutConnApi = "http://xxx/connectors/mys208/config"
+	connapi = "http:/xxx/connectors/mys208"
+	statusapi = "http://xxx/connectors/mys208/status"
 	contType = "application/json"
 	pool *redis.Pool
 )
@@ -58,25 +58,25 @@ type Postconndata struct {
 func NewPutconndata(ip, tablist string) *Putconndata {
 	return &Putconndata{
 		Connectorclass: "io.debezium.connector.mysql.MySqlConnector",
-	    Incrementingcolumnname: "id",
-	    Databaseuser: "debezium",
-        Transformschangetopictype: "org.apache.kafka.connect.transforms.RegexRouter",
-        Databaseserverid: "1",
-        Transformschangetopicreplacement: "$1-smt",
-        Databasehistorykafkabootstrapservers: ip,
-        Databasehistorykafkatopic: "account_topic",
-        Transformschangetopicregex: "(.*)",
-        Transforms: "unwrap,changetopic",
-        Databaseservername: "test",
-        Databaseport: "4249",
-        Includeschemachanges: "true",
-        Tablewhitelist: tablist,
-        Databasehostname: "xxx",
-        Databasepassword: "xxx",
-        Name: "mys208",
-        Databasehistoryskipunparseableddl: "true",
-        Transformsunwraptype: "io.debezium.transforms.UnwrapFromEnvelope",
-        Databasewhitelist: "muniuser",
+	        Incrementingcolumnname: "id",
+	        Databaseuser: "debezium",
+                Transformschangetopictype: "org.apache.kafka.connect.transforms.RegexRouter",
+                Databaseserverid: "1",
+                Transformschangetopicreplacement: "$1-smt",
+                Databasehistorykafkabootstrapservers: ip,
+                Databasehistorykafkatopic: "account_topic",
+                Transformschangetopicregex: "(.*)",
+                Transforms: "unwrap,changetopic",
+                Databaseservername: "test",
+                Databaseport: "3306",
+                Includeschemachanges: "true",
+                Tablewhitelist: tablist,
+                Databasehostname: "xxx",
+                Databasepassword: "xxx",
+                Name: "mys208",
+                Databasehistoryskipunparseableddl: "true",
+                Transformsunwraptype: "io.debezium.transforms.UnwrapFromEnvelope",
+                Databasewhitelist: "muniuser",
 		Snapshotmode: "schema_only",
 	}
 }
