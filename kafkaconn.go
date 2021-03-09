@@ -76,7 +76,7 @@ func NewPutconndata(ip, tablist string) *Putconndata {
                 Name: "mys208",
                 Databasehistoryskipunparseableddl: "true",
                 Transformsunwraptype: "io.debezium.transforms.UnwrapFromEnvelope",
-                Databasewhitelist: "muniuser",
+                Databasewhitelist: "xxx",
 		Snapshotmode: "schema_only",
 	}
 }
