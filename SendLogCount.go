@@ -83,8 +83,8 @@ func main() {
 
 func Count() string {
 	//成功数
-	sdata := fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:true AND appNodeRemark:统一待办| stats dc(traceId)\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
-	sbody := fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:true AND appNodeRemark:统一待办| stats dc(traceId)", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
+	sdata := fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:true AND appNodeRemark:x| stats dc(traceId)\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
+	sbody := fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:true AND appNodeRemark:x| stats dc(traceId)", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
 	obj1 := SLogData{
 		logdata: sdata,
 		logbody: sbody,
@@ -92,8 +92,8 @@ func Count() string {
 	}
 
         //失败数
-	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:false AND appNodeRemark:统一待办| stats dc(traceId) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
-	sbody = fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:false AND appNodeRemark:统一待办| stats dc(traceId) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
+	sdata = fmt.Sprintf(`{"searchParamHead": {"queryTime": %s}, "searchParamBody": {"requestBody": "{\"indexGroup\": \"osp\", \"queryString\": \"* AND success:false AND appNodeRemark:x| stats dc(traceId) as countnum\", \"timeType\":2, \"from\":\"%s\", \"to\":\"%s\"}"}}`, timestr, fromTime, toTime)
+	sbody = fmt.Sprintf(`{"indexGroup": "osp", "queryString": "* AND success:false AND appNodeRemark:x| stats dc(traceId) as countnum", "timeType":2, "from":"%s", "to":"%s"}`, fromTime, toTime)
 	obj2 := SLogData{
 		logdata: sdata,
 		logbody: sbody,
@@ -169,7 +169,7 @@ func demo(numberstr, templateid string) bool {
 	fmt.Println(SendData)
 	d1 := fmt.Sprintf(d, numberstr, templateid, SendData)
 	token := GetGwToken(gwapi)
-	c := url.Values{"method": {"xxx"}, "format": {"json"}, "appId": {"10009"}, "version": {"Vx"}, "accessToken": {token}, "sign": {"xxx"}, "timestamp": {"20190313162400"},
+	c := url.Values{"method": {"xxx"}, "format": {"json"}, "appId": {"x"}, "version": {"Vx"}, "accessToken": {token}, "sign": {"xxx"}, "timestamp": {"20190313162400"},
 		"content": {d1}}
 	tzapi := fmt.Sprint(api, c.Encode())
 	fmt.Println(tzapi)
